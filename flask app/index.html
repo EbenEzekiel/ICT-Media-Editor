@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Audio Extractor</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background: #1e293b;
+      padding: 30px;
+      border-radius: 12px;
+      width: 350px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    input, select, button {
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+    }
+
+    input {
+      background: #334155;
+      color: white;
+    }
+
+    select {
+      background: #334155;
+      color: white;
+    }
+
+    button {
+      background: #22c55e;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #16a34a;
+    }
+
+    .status {
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .loading {
+      color: #facc15;
+    }
+
+    .success {
+      color: #22c55e;
+    }
+
+    .error {
+      color: #ef4444;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>🎵 Audio Extractor</h2>
+
+  <input type="file" id="videoFile" accept="video/*">
+
+  <select id="format">
+    <option value="mp3">MP3</option>
+    <option value="wav">WAV</option>
+    <option value="aac">AAC</option>
+  </select>
+
+  <button onclick="extractAudio()">Extract Audio</button>
+
+  <div id="status" class="status"></div>
+</div>
+
+<script>
+  const formData = new FormData();
+formData.append("video", file);
+formData.append("format", format);
+
+fetch("http://localhost:5000/extract", {
+  method: "POST",
+  body: formData
+})
+.then(res => {
+  if (!res.ok) throw new Error("Server error");
+  return res.blob();
+})
+.then(blob => {
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "output." + format;
+  a.click();
+
+  status.textContent = "Download ready!";
+  status.className = "status success";
+})
+.catch(err => {
+  status.textContent = "Error processing file.";
+  status.className = "status error";
+});
+  
+</script>
+
+</body>
+</html>
